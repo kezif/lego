@@ -1,7 +1,7 @@
 from selenium import webdriver
 from time import sleep
 from selenium.webdriver.support.ui import Select
-from os import mkdir
+from os import makedirs
 
 
 
@@ -49,10 +49,10 @@ class BrickBot():
         self.driver.find_element_by_xpath(f'//*[text()="{wishlist_name}"]').click()
     
     def load_shop(self,shop_id,wishlists_name):
-        try:
-            mkdir(f'pages//{shop_id}')
-        except FileExistsError:
-            pass
+        base_path = f'pages//{"_".join([f[:4] for f in wishlists_name])}//{shop_id}'
+        makedirs(base_path, exist_ok=True)
+        
+        
 
         sleep(0.5)
         logging.info(f'Going to {shop_id=}')
@@ -83,7 +83,7 @@ class BrickBot():
         num_pages = num_pages.text.split('\n')[-2] 
         for page_number in range(1,int(num_pages)+1):  # iterate over pages
             logging.info(f'Saving page: {page_number}')
-            saving_path = f'pages//{shop_id}//page_{str(page_number)}_{shop_id}_{str(wishlists_name)}.html'
+            saving_path = f'{base_path}//page{str(page_number)}.html'
 
             BrickBot.save_page(self.driver, saving_path)  # save page source
             self.driver.find_element_by_xpath('//*[@id="storeApp"]//a[@aria-label="Next"]').click()
@@ -99,6 +99,8 @@ if __name__ == '__main__':
     bot.login()
     wanted_lists = ['mecjh','frame+armored','mixels parts','parta essentials']
     bot.load_shop('gritts',wanted_lists)
+    bot.load_shop('michek',wanted_lists)
     bot.load_shop('rafgier',wanted_lists)
+    
     
     bot.quit()
