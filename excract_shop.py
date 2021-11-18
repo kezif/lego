@@ -2,14 +2,14 @@ from selenium import webdriver
 from time import sleep
 from selenium.webdriver.support.ui import Select
 from os import makedirs
-
+from contextlib import AbstractContextManager
 
 
 from config import USERNAME, PASSWORD, BROWSEROPTIONS, logging
 
 
 
-class BrickBot():
+class BrickBot(AbstractContextManager):
     def __init__(self):
         self.driver = webdriver.Chrome('/usr/bin/chromedriver', options=BROWSEROPTIONS)
         self.driver.implicitly_wait(10) # seconds
@@ -91,16 +91,13 @@ class BrickBot():
             self.driver.find_element_by_xpath('//*[@id="storeApp"]//div[@class="table-header-image"]')  # wait until page is loaded
                 
     
-    def quit(self):
+    def __exit__(self, exc_type, exc_value, traceback):
         self.driver.close()
 
 if __name__ == '__main__':
-    bot = BrickBot()
-    bot.login()
-    wanted_lists = ['mecjh','frame+armored','mixels parts','parta essentials']
-    bot.load_shop('gritts',wanted_lists)
-    bot.load_shop('michek',wanted_lists)
-    bot.load_shop('rafgier',wanted_lists)
-    
-    
-    bot.quit()
+    with BrickBot() as bot:
+        bot.login()
+        wanted_lists = ['mecjh','frame+armored','mixels parts','parta essentials']
+        bot.load_shop('gritts',wanted_lists)
+        bot.load_shop('michek',wanted_lists)
+        bot.load_shop('rafgier',wanted_lists)
