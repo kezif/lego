@@ -5,8 +5,8 @@ from os import makedirs
 from contextlib import AbstractContextManager
 
 
-from config import USERNAME, PASSWORD, BROWSEROPTIONS, logging
-
+from config import BROWSEROPTIONS, logging
+from credentials import USERNAME, PASSWORD
 
 
 class BrickBot(AbstractContextManager):
